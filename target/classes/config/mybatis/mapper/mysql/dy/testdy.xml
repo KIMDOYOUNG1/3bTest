@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="test.dy">
+
+<insert id = "insMM" parameterType="testVO">
+	<if test='testct == ""'>
+	insert into testdo(test_name, test_pw, test_bd) values (#{testname},#{testpw},#{testbd})
+	</if>
+	<if test='testct != ""'>
+	insert into testdo(test_name, test_pw, test_bd, test_ct) values (#{testname},#{testpw},#{testbd},#{testct})
+	</if>
+	
+</insert>
+
+	<select id="seMM" resultType = "com.gogi.proj.dy.vo.testVO">
+		select test_name as testname ,test_pw as testpw ,test_bd as testbd , test_ct as testct from testdo
+	</select>
+	
+	<insert id = "insBoard" parameterType="testVO">
+	
+	insert into testboard(
+	tb_ts_number,
+	tb_ts_name,
+	tb_title,
+	tb_comment,
+	tb_ts_ct,
+	tb_ts_regdate
+	)
+	values
+	(concat(date_format(now(),'%Y%m%d%h%i%s'),#{tbname}),#{tbname},#{tbtitle},#{tbcomment},#{tbct},now())
+
+	
+</insert>
+	
+	<select id="boardview" resultType = "testVO2" parameterType="testVO2">
+		select
+		tb_ts_number as tbnumber,
+        tb_ts_name as tbname,
+		tb_title as tbtitle,
+		tb_comment as tbcomment,
+		tb_ts_ct as tbct,
+		date_format(tb_ts_regdate, '%Y-%m-%d') as tbregdate
+		from testboard
+		order by tb_ts_regdate asc;
+	</select>
+	
+	<select id="boardviewOne" resultType = "testVO2">
+		select
+		tb_ts_number as tbnumber,
+		tb_ts_name as tbname,
+		tb_title as tbtitle,
+		tb_comment as tbcomment,
+		tb_ts_ct as tbct,
+		tb_ts_regdate as tbregdate
+		from testboard
+		where
+		tb_ts_number = #{tbnumber}
+	</select>
+	
+		<insert id = "insac" parameterType="testVO">
+	
+	insert into access(ac_name, ac_type,ac_sysdate) values(#{acname},#{actype},now());
+	
+</insert>
+		
+			<select id="spsal" resultType = "testVO4">
+		select
+		sp_nation as spNation,
+		sp_name as spName,
+		sp_age as spAge,
+		sp_sal as spSal
+		from
+		spsal
+		order by
+        spSal desc
+	</select>
+	
+			<select id="spsalOne" resultType = "testVO4">
+		select
+		sp_nation as spNation,
+		sp_name as spName,
+		sp_age as spAge,
+		sp_sal as spSal
+		from
+		spsal
+		where sp_name = #{spName}
+	</select>
+	
+			<insert id = "insspsal" parameterType="testVO4">
+	
+	insert into spsal(sp_nation, sp_name, sp_age, sp_sal) values(#{spNation},#{spName},#{spAge},#{spSal})
+	
+</insert>
+
+		<select id="totalsp" resultType = "int" parameterType="testVO4">
+		select
+		count(*)
+		from
+		spsal
+	</select>
+	
+	<select id="isMM" resultType="int">
+	select count(*) from testdo where test_name = #{testname} and test_pw = #{testpw}
+	</select>
+	
+	<delete id="spdelete" parameterType="testVO4">
+		delete from spsal where sp_name = #{spName}
+	</delete>
+	
+	<update id="spupdate" parameterType="testVO4">
+	update spsal set sp_name = #{spName2} ,sp_age = #{spAge} , sp_sal = #{spSal} where sp_name = #{spName}
+	</update>
+		
+	<select id="spfalse" resultType="int" parameterType="testVO4">
+		select count(sp_name) from spsal where sp_name = #{spName}
+	</select>
+	
+	<select id="nationList" resultType = "testVO5">
+		select nt_code as ntCode, nt_name as ntName from nation order by nt_code asc 
+	</select> 
+	
+	<insert id = "insnation" parameterType="testVO5">	
+	insert into nation(nt_code, nt_name) values (#{ntCode},#{ntName})	
+	</insert>
+</mapper>
